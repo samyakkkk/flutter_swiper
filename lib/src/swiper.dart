@@ -146,16 +146,16 @@ class Swiper extends StatefulWidget {
     this.scale,
     this.fade,
   })  : assert(itemBuilder != null || transformer != null,
-            "itemBuilder and transformItemBuilder must not be both null"),
+  "itemBuilder and transformItemBuilder must not be both null"),
         assert(
-            !loop ||
-                ((loop &&
-                        layout == SwiperLayout.DEFAULT &&
-                        (indicatorLayout == PageIndicatorLayout.SCALE ||
-                            indicatorLayout == PageIndicatorLayout.COLOR ||
-                            indicatorLayout == PageIndicatorLayout.NONE)) ||
-                    (loop && layout != SwiperLayout.DEFAULT)),
-            "Only support `PageIndicatorLayout.SCALE` and `PageIndicatorLayout.COLOR`when layout==SwiperLayout.DEFAULT in loop mode"),
+        !loop ||
+            ((loop &&
+                layout == SwiperLayout.DEFAULT &&
+                (indicatorLayout == PageIndicatorLayout.SCALE ||
+                    indicatorLayout == PageIndicatorLayout.COLOR ||
+                    indicatorLayout == PageIndicatorLayout.NONE)) ||
+                (loop && layout != SwiperLayout.DEFAULT)),
+        "Only support `PageIndicatorLayout.SCALE` and `PageIndicatorLayout.COLOR`when layout==SwiperLayout.DEFAULT in loop mode"),
         super(key: key);
 
   factory Swiper.children({
@@ -402,7 +402,7 @@ class _SwiperState extends _SwiperTimerMixin {
           loop: widget.loop,
           itemCount: widget.itemCount,
           reverse:
-              widget.transformer == null ? false : widget.transformer.reverse,
+          widget.transformer == null ? false : widget.transformer.reverse,
           viewportFraction: widget.viewportFraction);
     }
     super.initState();
@@ -486,7 +486,7 @@ class _SwiperState extends _SwiperTimerMixin {
       PageTransformer transformer = widget.transformer;
       if (widget.scale != null || widget.fade != null) {
         transformer =
-            new ScaleAndFadeTransformer(scale: widget.scale, fade: widget.fade);
+        new ScaleAndFadeTransformer(scale: widget.scale, fade: widget.fade);
       }
 
       Widget child = new TransformerPageView(
@@ -526,7 +526,7 @@ class _SwiperState extends _SwiperTimerMixin {
     } else if (widget.layout == SwiperLayout.TINDER) {
       return new _TinderSwiper(
         loop: widget.loop,
-        itemWidth: widget.itemWidth,
+        itemWidth: widget.  itemWidth,
         itemHeight: widget.itemHeight,
         itemCount: widget.itemCount,
         itemBuilder: itemBuilder,
@@ -662,17 +662,17 @@ abstract class _SubSwiper extends StatefulWidget {
 
   _SubSwiper(
       {Key key,
-      this.loop,
-      this.itemHeight,
-      this.itemWidth,
-      this.duration,
-      this.curve,
-      this.itemBuilder,
-      this.controller,
-      this.index,
-      this.itemCount,
-      this.scrollDirection: Axis.horizontal,
-      this.onIndexChanged})
+        this.loop,
+        this.itemHeight,
+        this.itemWidth,
+        this.duration,
+        this.curve,
+        this.itemBuilder,
+        this.controller,
+        this.index,
+        this.itemCount,
+        this.scrollDirection: Axis.horizontal,
+        this.onIndexChanged})
       : super(key: key);
 
   @override
@@ -704,18 +704,18 @@ class _TinderSwiper extends _SubSwiper {
     Axis scrollDirection,
   })  : assert(itemWidth != null && itemHeight != null),
         super(
-            loop: loop,
-            key: key,
-            itemWidth: itemWidth,
-            itemHeight: itemHeight,
-            itemBuilder: itemBuilder,
-            curve: curve,
-            duration: duration,
-            controller: controller,
-            index: index,
-            onIndexChanged: onIndexChanged,
-            itemCount: itemCount,
-            scrollDirection: scrollDirection);
+          loop: loop,
+          key: key,
+          itemWidth: itemWidth,
+          itemHeight: itemHeight,
+          itemBuilder: itemBuilder,
+          curve: curve,
+          duration: duration,
+          controller: controller,
+          index: index,
+          onIndexChanged: onIndexChanged,
+          itemCount: itemCount,
+          scrollDirection: scrollDirection);
 
   @override
   State<StatefulWidget> createState() {
@@ -738,18 +738,18 @@ class _StackSwiper extends _SubSwiper {
     int itemCount,
     Axis scrollDirection,
   }) : super(
-            loop: loop,
-            key: key,
-            itemWidth: itemWidth,
-            itemHeight: itemHeight,
-            itemBuilder: itemBuilder,
-            curve: curve,
-            duration: duration,
-            controller: controller,
-            index: index,
-            onIndexChanged: onIndexChanged,
-            itemCount: itemCount,
-            scrollDirection: scrollDirection);
+      loop: loop,
+      key: key,
+      itemWidth: itemWidth,
+      itemHeight: itemHeight,
+      itemBuilder: itemBuilder,
+      curve: curve,
+      duration: duration,
+      controller: controller,
+      index: index,
+      onIndexChanged: onIndexChanged,
+      itemCount: itemCount,
+      scrollDirection: scrollDirection);
 
   @override
   State<StatefulWidget> createState() {
@@ -862,10 +862,10 @@ class _StackViewState extends _CustomLayoutStateBase<_StackSwiper> {
   void _updateValues() {
     if (widget.scrollDirection == Axis.horizontal) {
       double space = (_swiperWidth - widget.itemWidth) / 2;
-      offsets = [-space, -space / 3 * 2, -space / 3, 0.0, _swiperWidth];
+      offsets = [-space, -space / 3 * 2, -space / 3, 0.0, _swiperWidth, _swiperWidth, _swiperWidth];
     } else {
       double space = (_swiperHeight - widget.itemHeight) / 2;
-      offsets = [-space, -space / 3 * 2, -space / 3, 0.0, _swiperHeight];
+      offsets = [-space, -space / 3 * 2, -space / 3, 0.0, _swiperHeight*0.58, _swiperHeight*0.64, _swiperHeight];
     }
   }
 
@@ -880,12 +880,12 @@ class _StackViewState extends _CustomLayoutStateBase<_StackSwiper> {
     super.afterRender();
 
     //length of the values array below
-    _animationCount = 5;
+    _animationCount = 7;
 
     //Array below this line, '0' index is 1.0 ,witch is the first item show in swiper.
     _startIndex = -3;
-    scales = [0.7, 0.8, 0.9, 1.0, 1.0];
-    opacity = [0.0, 0.5, 1.0, 1.0, 1.0];
+    scales = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+    opacity = [0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
 
     _updateValues();
   }

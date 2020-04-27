@@ -105,6 +105,7 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
       onPanStart: _onPanStart,
       onPanEnd: _onPanEnd,
       onPanUpdate: _onPanUpdate,
+      onTap: _onTap,
       child: new ClipRect(
         child: new Center(
           child: _buildContainer(list),
@@ -126,13 +127,16 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
   double _currentPos;
 
   bool _lockScroll = false;
+  void _onTap(){
+    print(_currentIndex);
+  }
 
-  void _move(double position, {int nextIndex}) async {
+  void _move(double position, {int nextIndex, Duration duration}) async {
     if (_lockScroll) return;
     try {
       _lockScroll = true;
       await _animationController.animateTo(position,
-          duration: new Duration(milliseconds: widget.duration),
+          duration: duration,
           curve: widget.curve);
       if (nextIndex != null) {
         widget.onIndexChanged(widget.getCorrectIndex(nextIndex));
@@ -190,23 +194,39 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
     }
   }
 
-  void _onPanEnd(DragEndDetails details) {
+  void _onPanEnd(DragEndDetails details) async{
     if (_lockScroll) return;
 
     double velocity = widget.scrollDirection == Axis.horizontal
         ? details.velocity.pixelsPerSecond.dx
         : details.velocity.pixelsPerSecond.dy;
-
+    double vel = velocity.abs();
+    print('[Veloctiy] - $velocity');
+    print('[Vel] - $vel');
+    int pagesnaps;
+    if(vel<1500){
+      pagesnaps = 1;
+    } else if(vel < 2500){
+      pagesnaps = 3;
+    } else {
+      pagesnaps = (vel/1000 * 1.2).round();
+    }
+    print('[PageSnaps] - $pagesnaps');
     if (_animationController.value >= 0.75 || velocity > 500.0) {
       if (_currentIndex <= 0 && !widget.loop) {
         return;
       }
-      _move(1.0, nextIndex: _currentIndex - 1);
+      for(int i =0; i<pagesnaps; i++){
+        await _move(1.0, nextIndex: _currentIndex - 1, duration: Duration(milliseconds: (1500/(pagesnaps-i)).toInt()));
+      }
     } else if (_animationController.value < 0.25 || velocity < -500.0) {
       if (_currentIndex >= widget.itemCount - 1 && !widget.loop) {
         return;
       }
-      _move(0.0, nextIndex: _currentIndex + 1);
+      for(int i =0; i<pagesnaps; i++){
+        await _move(0.0, nextIndex: _currentIndex + 1, duration: Duration(milliseconds: (1500/(pagesnaps-i)).toInt()));
+      }
+//      _move(0.0, nextIndex: _currentIndex + 1);
     } else {
       _move(0.5);
     }
@@ -220,13 +240,13 @@ abstract class _CustomLayoutStateBase<T extends _SubSwiper> extends State<T>
         : details.globalPosition.dy;
   }
 
-  void _onPanUpdate(DragUpdateDetails details) {
+  void  _onPanUpdate(DragUpdateDetails details) {
     if (_lockScroll) return;
     double value = _currentValue +
         ((widget.scrollDirection == Axis.horizontal
-                    ? details.globalPosition.dx
-                    : details.globalPosition.dy) -
-                _currentPos) /
+            ? details.globalPosition.dx
+            : details.globalPosition.dy) -
+            _currentPos) /
             _swiperWidth /
             2;
     // no loop ?
@@ -288,7 +308,7 @@ abstract class TransformBuilder<T> {
 
 class ScaleTransformBuilder extends TransformBuilder<double> {
   final Alignment alignment;
-  ScaleTransformBuilder({List<double> values, this.alignment: Alignment.center})
+  ScaleTransformBuilder({List<double> values, this.alignment: Alignment.bottomCenter})
       : super(values: values);
 
   Widget build(int i, double animationValue, Widget widget) {
@@ -369,32 +389,32 @@ class _CustomLayoutSwiper extends _SubSwiper {
 
   _CustomLayoutSwiper(
       {this.option,
-      double itemWidth,
-      bool loop,
-      double itemHeight,
-      ValueChanged<int> onIndexChanged,
-      Key key,
-      IndexedWidgetBuilder itemBuilder,
-      Curve curve,
-      int duration,
-      int index,
-      int itemCount,
-      Axis scrollDirection,
-      SwiperController controller})
+        double itemWidth,
+        bool loop,
+        double itemHeight,
+        ValueChanged<int> onIndexChanged,
+        Key key,
+        IndexedWidgetBuilder itemBuilder,
+        Curve curve,
+        int duration,
+        int index,
+        int itemCount,
+        Axis scrollDirection,
+        SwiperController controller})
       : assert(option != null),
         super(
-            loop: loop,
-            onIndexChanged: onIndexChanged,
-            itemWidth: itemWidth,
-            itemHeight: itemHeight,
-            key: key,
-            itemBuilder: itemBuilder,
-            curve: curve,
-            duration: duration,
-            index: index,
-            itemCount: itemCount,
-            controller: controller,
-            scrollDirection: scrollDirection);
+          loop: loop,
+          onIndexChanged: onIndexChanged,
+          itemWidth: itemWidth,
+          itemHeight: itemHeight,
+          key: key,
+          itemBuilder: itemBuilder,
+          curve: curve,
+          duration: duration,
+          index: index,
+          itemCount: itemCount,
+          controller: controller,
+          scrollDirection: scrollDirection);
 
   @override
   State<StatefulWidget> createState() {
